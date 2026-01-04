@@ -71,10 +71,7 @@ Write or use existing CUDA kernel files (e.g., `test_kernel.cu`) to generate rea
     ```bash
     python3 -m nv_isa_solver.scan_disasm --arch SM100a sass.txt
     ```
-
-    > **Important**: The `parser.py` script was originally designed for SM90a architecture. When scanning SM100a instructions, you may encounter parsing errors due to new instruction formats or operand types (e.g., `ValueError: Couldn't parse ...`).
-    >
-    > **Action Required**: You need to iteratively modify `nv_isa_solver/parser.py` based on the error messages to support new SM100a syntax. For example, if you see an unknown operand error, you should add the corresponding regex pattern or handling logic in `parser.py`.
+> **Note**: For SM100a (Blackwell) architecture, `nvdisasm` output may contain `.headerflags` lines or other metadata that can confuse the parser. The `disasm_utils.py` has been updated to strictly filter output lines, only processing those containing `/*` comments.
 
 ## 5. Iterative Enhancement
 
@@ -95,3 +92,4 @@ python3 -m nv_isa_solver.instruction_solver --arch SM100a --cache_file disasm_ca
 ```
 
 The generated HTML report is located in the `output/` directory, and `isa.json` is located in the current directory.
+

@@ -8,9 +8,11 @@ from .parser import InstructionParser
 
 
 def _process_dump(dump):
-    lines = dump.split("\n")[1:]
+    lines = dump.split("\n")
     result = []
     for line in lines:
+        if "/*" not in line:
+            continue
         result.append(line[line.find("*/") + 2 :].strip())
     return "\n".join(result).strip()
 
