@@ -28,8 +28,14 @@ class Disassembler:
         try:
             with open(filename) as file:
                 for line in file:
-                    asm, inst = line.split("---")
-                    self.cache[bytes.fromhex(inst.strip())] = asm.strip()
+                    if "---" not in line:
+                        continue
+                    parts = line.split("---")
+                    if len(parts) < 2:
+                        continue
+                    asm = parts[0].strip()
+                    inst = parts[1].strip()
+                    self.cache[bytes.fromhex(inst)] = asm
         except FileNotFoundError:
             print("Cache could not be loaded")
             pass
