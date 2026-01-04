@@ -2,6 +2,19 @@
 
 This guide describes how to use the `nv_isa_solver` toolset to reverse engineer and generate ISA documentation for NVIDIA GPUs (e.g., SM100a).
 
+## 0. Prerequisites
+
+Ensure that the **NVIDIA CUDA Toolkit** is installed and the following tools are in your system PATH:
+- `nvcc`: NVIDIA CUDA Compiler
+- `nvdisasm`: NVIDIA Disassembler
+- `cuobjdump`: CUDA Object Dump Utility
+
+You can verify the installation with:
+```bash
+nvcc --version
+nvdisasm --version
+```
+
 ## 1. Installation
 
 First, ensure that all dependencies listed in `requirements.txt` (such as `tqdm`) are installed.
@@ -20,6 +33,8 @@ In the `nv_isa_solver` source directory, use the `populate_cache` script to perf
 ```bash
 python3 -m nv_isa_solver.populate_cache --arch SM100a --cache_file disasm_cache.txt
 ```
+
+> **Tip**: During the brute-force process, you may see disassembled instructions containing `???` (e.g., `ATOM.???0`). This is normal behavior as the script probes undefined or reserved bit patterns. These entries are typically filtered out or ignored in the final solver stage.
 
 ## 3. Cross-Mutation
 
