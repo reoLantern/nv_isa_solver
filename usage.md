@@ -17,10 +17,16 @@ nvdisasm --version
 
 ## 1. Installation
 
-First, ensure that all dependencies listed in `requirements.txt` (such as `tqdm`) are installed.
+First, ensure that all dependencies listed in `requirements.txt` (such as `tqdm`) are installed. It is highly recommended to use a virtual environment to avoid "externally-managed-environment" errors.
 
 ```bash
-# Ensure you are in the virtual environment
+# Create a virtual environment (if not already created)
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -44,6 +50,8 @@ Leverage the existing instruction cache to discover new valid instructions by cr
 python3 -m nv_isa_solver.mutate_opcodes --arch SM100a --cache_file disasm_cache.txt
 ```
 
+> **Note**: If you encounter a `ValueError: not enough values to unpack` error, it means your `disasm_cache.txt` contains malformed lines. The latest version of `disasm_utils.py` includes a fix to skip these lines automatically. Ensure your code is up to date.
+
 ## 4. Extracting Real Instructions from CUDA Samples
 
 Write or use existing CUDA kernel files (e.g., `test_kernel.cu`) to generate real SASS instructions via the compiler, supplementing complex instructions that brute-force enumeration cannot cover.
@@ -63,6 +71,10 @@ Write or use existing CUDA kernel files (e.g., `test_kernel.cu`) to generate rea
     ```bash
     python3 -m nv_isa_solver.scan_disasm --arch SM100a sass.txt
     ```
+
+    > **Important**: The `parser.py` script was originally designed for SM90a architecture. When scanning SM100a instructions, you may encounter parsing errors due to new instruction formats or operand types (e.g., `ValueError: Couldn't parse ...`).
+    >
+    > **Action Required**: You need to iteratively modify `nv_isa_solver/parser.py` based on the error messages to support new SM100a syntax. For example, if you see an unknown operand error, you should add the corresponding regex pattern or handling logic in `parser.py`.
 
 ## 5. Iterative Enhancement
 
