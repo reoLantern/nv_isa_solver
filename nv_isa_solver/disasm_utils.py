@@ -8,9 +8,11 @@ from .parser import InstructionParser
 
 
 def _process_dump(dump):
-    lines = dump.split("\n")[1:]
+    lines = dump.split("\n")
     result = []
     for line in lines:
+        if "/*" not in line:
+            continue
         result.append(line[line.find("*/") + 2 :].strip())
     return "\n".join(result).strip()
 
@@ -28,8 +30,14 @@ class Disassembler:
         try:
             with open(filename) as file:
                 for line in file:
-                    asm, inst = line.split("---")
-                    self.cache[bytes.fromhex(inst.strip())] = asm.strip()
+                    if "---" not in line:
+                        continue
+                    parts = line.split("---")
+                    if len(parts) < 2:
+                        continue
+                    asm = parts[0].strip()
+                    inst = parts[1].strip()
+                    self.cache[bytes.fromhex(inst)] = asm
         except FileNotFoundError:
             print("Cache could not be loaded")
             pass
